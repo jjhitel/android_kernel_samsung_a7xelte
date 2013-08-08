@@ -1816,7 +1816,7 @@ static int unix_stream_sendmsg(struct kiocb *kiocb, struct socket *sock,
 		goto pipe_err;
 
 	while (sent < len) {
-		size = len-sent;
+		size = len - sent;
 
 		/* Keep two messages in the pipe so it schedules better */
 		size = min_t(int, size, (sk->sk_sndbuf >> 1) - 64);
@@ -1827,8 +1827,7 @@ static int unix_stream_sendmsg(struct kiocb *kiocb, struct socket *sock,
 		data_len = max_t(int, 0, size - SKB_MAX_HEAD(0));
 
 		skb = sock_alloc_send_pskb(sk, size - data_len, data_len,
-			msg->msg_flags & MSG_DONTWAIT, &err);
-
+					   msg->msg_flags & MSG_DONTWAIT, &err);
 		if (!skb)
 			goto out_err;
 
@@ -1844,8 +1843,7 @@ static int unix_stream_sendmsg(struct kiocb *kiocb, struct socket *sock,
 		skb_put(skb, size - data_len);
 		skb->data_len = data_len;
 		skb->len = size;
-		err = skb_copy_datagram_from_iovec(skb, 0, msg->msg_iov,
-			sent, size);
+		err = skb_copy_datagram_from_iovec(skb, 0, msg->msg_iov, 0, size);
 		if (err) {
 			kfree_skb(skb);
 			goto out_err;
@@ -2183,7 +2181,7 @@ again:
 
 		chunk = min_t(unsigned int, unix_skb_len(skb) - skip, size);
 		if (skb_copy_datagram_iovec(skb, UNIXCB(skb).consumed + skip,
-			msg->msg_iov, chunk)) {
+					    msg->msg_iov, chunk)) {
 			if (copied == 0)
 				copied = -EFAULT;
 			break;
