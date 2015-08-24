@@ -26,6 +26,8 @@
 #include <mach/cpufreq.h>
 #include <linux/suspend.h>
 
+//#define DM_HOTPLUG_DEBUG
+
 #if defined(CONFIG_SOC_EXYNOS5430)
 #define NORMALMIN_FREQ	1000000
 #else
