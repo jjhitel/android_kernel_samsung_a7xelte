@@ -987,6 +987,7 @@ static long vfsspi_ioctl(struct file *filp, unsigned int cmd,
 		}
 		if (onoff) {
 			u8 retry_cnt = 0;
+			(void)set_hmp_boost(1);
 			pr_info("%s VFSSPI_IOCTL_CPU_SPEEDUP ON:%d, retry: %d\n",
 				__func__, onoff, retry_cnt);
 #if defined(CONFIG_SECURE_OS_BOOSTER_API)
