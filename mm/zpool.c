@@ -129,6 +129,7 @@ static void zpool_put_driver(struct zpool_driver *driver)
 /**
  * zpool_create_pool() - Create a new zpool
  * @type	The type of the zpool to create (e.g. zbud, zsmalloc)
+ * @name	The name of the zpool (e.g. zram0, zswap)
  * @gfp		The GFP flags to use when allocating the pool.
  * @ops		The optional ops callback.
  *
@@ -140,7 +141,8 @@ static void zpool_put_driver(struct zpool_driver *driver)
  *
  * Returns: New zpool on success, NULL on failure.
  */
-struct zpool *zpool_create_pool(char *type, gfp_t gfp, struct zpool_ops *ops)
+struct zpool *zpool_create_pool(char *type, char *name, gfp_t gfp,
+		struct zpool_ops *ops)
 {
 	struct zpool_driver *driver;
 	struct zpool *zpool;
@@ -168,7 +170,7 @@ struct zpool *zpool_create_pool(char *type, gfp_t gfp, struct zpool_ops *ops)
 
 	zpool->type = driver->type;
 	zpool->driver = driver;
-	zpool->pool = driver->create(gfp, ops);
+	zpool->pool = driver->create(name, gfp, ops);
 	zpool->ops = ops;
 
 	if (!zpool->pool) {
@@ -345,6 +347,16 @@ u64 zpool_get_total_size(struct zpool *zpool)
 	return zpool->driver->total_size(zpool->pool);
 }
 
+unsigned long zpool_compact(struct zpool *zpool)
+{
+	return zpool->driver->compact(zpool->pool);
+}
+
+bool zpool_compactable(struct zpool *zpool, unsigned int pages)
+{
+	return zpool->driver->compactable(zpool->pool, pages);
+}
+
 static int __init init_zpool(void)
 {
 	pr_info("loaded\n");
@@ -362,3 +374,4 @@ module_exit(exit_zpool);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Dan Streetman <ddstreet@ieee.org>");
 MODULE_DESCRIPTION("Common API for compressed memory storage");
+
