@@ -424,8 +424,38 @@ extern struct cpufreq_governor cpufreq_gov_interactive;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_CAFACTIVE)
 extern struct cpufreq_governor cpufreq_gov_cafactive;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_cafactive)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_IMPULSE)
+extern struct cpufreq_governor cpufreq_gov_impulse;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_impulse)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_LIONHEART)
+extern struct cpufreq_governor cpufreq_gov_lionheart;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ALUCARD)
+extern struct cpufreq_governor cpufreq_gov_alucard;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_BIOSHOCK)
+extern struct cpufreq_governor cpufreq_gov_bioshock;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_BLUACTIVE)
+extern struct cpufreq_governor cpufreq_gov_bluactive;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVEX)
+extern struct cpufreq_governor cpufreq_gov_conservativex;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_DANCEDANCE)
+extern struct cpufreq_governor cpufreq_gov_dancedance;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_HYPER)
+extern struct cpufreq_governor cpufreq_gov_hyper;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_DARKNESS)
+extern struct cpufreq_governor cpufreq_gov_darkness;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_INTELLIACTIVE)
+extern struct cpufreq_governor cpufreq_gov_intelliactive;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_NIGHTMARE)
+extern struct cpufreq_governor cpufreq_gov_nightmare;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMANDPLUS)
+extern struct cpufreq_governor cpufreq_gov_ondemandplus;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_PEGASUSQ)
+extern struct cpufreq_governor cpufreq_gov_pegasusq;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_PRESERVATIVE)
+extern struct cpufreq_governor cpufreq_gov_preservative;
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SMARTASS2)
+extern struct cpufreq_governor cpufreq_gov_smartass2;
 #endif
-
 
 /*********************************************************************
  *                     FREQUENCY TABLE HELPERS                       *

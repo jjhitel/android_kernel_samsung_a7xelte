@@ -35,6 +35,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_COMMON)		+= cpufreq_governor.o
 obj-$(CONFIG_CPU_FREQ_GOV_YANKACTIVE)	+= cpufreq_yankactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_SMARTMAX)	+= cpufreq_smartmax.o
 obj-$(CONFIG_CPU_FREQ_GOV_SMARTMAX_EPS)	+= cpufreq_smartmax_eps.o
+obj-$(CONFIG_CPU_FREQ_GOV_IMPULSE)	+= cpufreq_impulse.o
 
 # CPUfreq cross-arch helpers
 obj-$(CONFIG_CPU_FREQ_TABLE)		+= freq_table.o
