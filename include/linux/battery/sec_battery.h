@@ -53,6 +53,8 @@
 #define ADC_CH_COUNT		10
 #define ADC_SAMPLE_COUNT	10
 
+#define SEC_INPUT_VOLTAGE_5V	5
+#define SEC_INPUT_VOLTAGE_9V	9
 #define BATT_MISC_EVENT_UNDEFINED_RANGE_TYPE	0x00000001
 
 struct adc_sample_info {
@@ -138,6 +140,9 @@ struct sec_battery_info {
 	unsigned long charging_next_time;
 	unsigned long charging_fullcharged_time;
 
+	unsigned long lcd_on_total_time;
+	unsigned long lcd_on_time;
+
 	/* chg temperature check */
 	bool chg_limit;
 
@@ -209,7 +214,6 @@ struct sec_battery_info {
 	int stability_test;
 	int eng_not_full_status;
 
-	bool skip_chg_temp_check;
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 	bool factory_self_discharging_mode_on;
 	bool force_discharging;
@@ -217,10 +221,6 @@ struct sec_battery_info {
 	bool discharging_ntc;
 	int discharging_ntc_adc;
 	int self_discharging_adc;
-#endif
-#if defined(CONFIG_SW_SELF_DISCHARGING)
-	struct wake_lock self_discharging_wake_lock;
-	bool sw_self_discharging;
 #endif
 
 	bool charging_block;
@@ -354,9 +354,6 @@ enum {
 	BATT_DISCHARGING_NTC,
 	BATT_DISCHARGING_NTC_ADC,
 	BATT_SELF_DISCHARGING_CONTROL,
-#endif
-#if defined(CONFIG_SW_SELF_DISCHARGING)
-	BATT_SW_SELF_DISCHARGING,
 #endif
 #if defined(CONFIG_WIRELESS_CHARGER_INBATTERY)
 	BATT_INBAT_WIRELESS_CS100,
