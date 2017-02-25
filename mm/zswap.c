@@ -1066,13 +1066,6 @@ static int zswap_frontswap_load(unsigned type, pgoff_t offset,
 			dst, &dlen);
 #endif
 
-	if (ret) {
-		hexdump("src buffer", src, entry->length);
-		if (dlen)
-			hexdump("dest buffer", dst, dlen);
-		printk("zswap_comp_op returned %d\n", ret);
-	}
-
 	kunmap_atomic(dst);
 	zpool_unmap_handle(zswap_pool, entry->handle);
 	BUG_ON(ret);
