@@ -30,7 +30,7 @@ LANG=C
 KERNELDIR=$(readlink -f .);
 RAMDISK_TMP=ramdisk_tmp
 RAMDISK_DIR=ramdisk_source
-DEFCONFIG=exynos7580-a7xelteskt_defconfig
+DEFCONFIG=exynos7580-a7xeltekor_defconfig
 
 
 CLEANUP()
