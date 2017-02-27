@@ -49,7 +49,6 @@ CLEANUP()
 	echo "Cleaning bootimg_tools from unneeded data..."
 	echo "Deleting kernel Image named 'kernel' in bootimg_tools dir....."
 	rm -f "$KERNELDIR"/bootimg_tools/boot_a7xelteskt/kernel
-	rm -f "$KERNELDIR"/bootimg_tools/boot_a7xelteskt/dt.img
 	echo "Deleting all files from ramdisk dir in bootimg_tools if it exists"
 	if [ ! -d "$KERNELDIR"/bootimg_tools/boot_a7xelteskt/ramdisk ]; then
 		mkdir -p "$KERNELDIR"/bootimg_tools/boot_a7xelteskt/ramdisk 
@@ -124,7 +123,6 @@ BUILD_NOW()
 
 	if [ -e "$KERNELDIR"/arch/arm64/boot/Image ]; then
 		cp arch/arm64/boot/Image bootimg_tools/boot_a7xelteskt/kernel
-		cp arch/arm64/boot/dts/exynos7580-a7xelte_kor_skt_03.dtb bootimg_tools/boot_a7xelteskt/dt.img
 		cp .config READY/view_only_config
 
 		# copy all ramdisk files to ramdisk temp dir.
