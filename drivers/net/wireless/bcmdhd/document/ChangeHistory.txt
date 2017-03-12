@@ -1,4 +1,41 @@
-BCM43xx DHD 1.141.64.61 for Android
+BCM43xx DHD 1.141.64.68 for Android
+
+DHD 1.141.64.68 - 2016.03.16
+New Feature
+ - REMOVE_P2PIE_BEFORE_DELIF added for Tizen
+
+Others
+ - CSP:1009440 Fixed extra vulnerability issue
+ - CSP:1025766 Fixed for unlinking of BSS structure in CFG during link down event
+ - Fixed coverity issue - buffer not null terminated
+ - Fixed kernel panic due to invalid memory access in DHD_LOG_DUMP code.
+
+
+2016.2.25 (1.141.64.62 --> 1.141.64.66)
+Others
+   - CSP:1021119 Request dynamic control of ENABLE_MAX_DTIM_IN_SUSPEND
+   - Fixed country re-mapping code for JP/212, RU/212, UA/16
+      (BCM4354: This patch should be sync up with FW 7.26.21 or higher version)
+	  
+2016.2.16 (1.141.64.61 --> 1.141.64.62)
+Kernel Panic
+   - Fixed Dereference before null check
+
+Others
+   - CSP:1009274 Changed scan time interval from 10 to 25 seconds
+   - CSP:1009440 Fixed potential buffer overflow issue
+   - CSP:1013303 Reset the last roamed BSSID after connection
+   - CSP:1014803 Adding sd init clk 400k patch for Exynos7870
+   - CSP:1015275 Fixed CCX enable issue after OKC enabled
+   - CSP:1015968 Add preallocated buffer for wlfc hanger
+   - CSP:1017827 Supported Mixed chip(43454 & 43455) feature for J7 platform
+   - CSP:1018222 Disabled HW OOB for BCM4334 A7 platform
+   - Added cfg80211 API changes for supporting kernel 3.18
+   - Added config for supporting EXYNOS7870 platform
+   - Disable ARP_OL_SNOOP Mode in packet filter
+   - Enabled DHCP_DUMP feature by default
+   - Fixed netdev notifier callback for linux-3.11 and above
+
 
 2016.1.8 (1.141.64.59 --> 1.141.64.61)
 Others
@@ -629,3 +666,5 @@ Others
 - Initial DHD release for Android KitKat
   Tested Chipset :BCM4354/BCM4339
   It is tested on Android JB MR2 platform
+
+

@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_sdio.c 604396 2015-12-07 06:50:33Z $
+ * $Id: dhd_sdio.c 618468 2016-02-11 03:34:08Z $
  */
 
 #include <typedefs.h>
@@ -9139,7 +9139,7 @@ static int concate_revision_bcm43341(dhd_bus_t *bus,
 	return 0;
 }
 
-#if !defined(MULTIPLE_CHIP_4345x)
+#if !defined(MULTIPLE_CHIP_4345X)
 static int
 concate_revision_bcm43454(dhd_bus_t *bus,
 	char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
@@ -9197,9 +9197,9 @@ concate_revision_bcm43455(dhd_bus_t *bus,
 	strcat(nv_path, chipver_tag);
 	return 0;
 }
-#endif /* !defined(MULTIPLE_CHIP_4345x) */
+#endif /* !defined(MULTIPLE_CHIP_4345X) */
 
-#if defined(MULTIPLE_CHIP_4345x)
+#if defined(MULTIPLE_CHIP_4345X)
 static int
 concate_revision_bcm4345x(dhd_bus_t *bus,
         char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
@@ -9210,9 +9210,9 @@ concate_revision_bcm4345x(dhd_bus_t *bus,
 	chip_id = bus->sih->chip;
 
 	if (chip_id == BCM43454_CHIP_ID) {
-			DHD_ERROR(("----- CHIP 43454 -----\n"));
-			strcat(fw_path, chipver_tag);
-			strcat(nv_path, chipver_tag);
+		DHD_ERROR(("----- CHIP 43454 -----\n"));
+		strcat(fw_path, chipver_tag);
+		strcat(nv_path, chipver_tag);
 	} else if (chip_id == BCM4345_CHIP_ID) {
 		DHD_ERROR(("----- CHIP 43455  -----\n"));
 	} else {
@@ -9221,7 +9221,7 @@ concate_revision_bcm4345x(dhd_bus_t *bus,
 
 	return 0;
 }
-#endif /* MULTIPLE_CHIP_4345x */
+#endif /* MULTIPLE_CHIP_4345X */
 
 int
 concate_revision(dhd_bus_t *bus, char *fw_path, int fw_path_len, char *nv_path, int nv_path_len)
@@ -9273,19 +9273,20 @@ concate_revision(dhd_bus_t *bus, char *fw_path, int fw_path_len, char *nv_path, 
 	case BCM43341_CHIP_ID:
 		res = concate_revision_bcm43341(bus, fw_path, fw_path_len, nv_path, nv_path_len);
 		break;
-#if defined(MULTIPLE_CHIP_4345x)
+#if defined(MULTIPLE_CHIP_4345X)
 	case BCM43454_CHIP_ID:
 	case BCM4345_CHIP_ID:
 		res = concate_revision_bcm4345x(bus, fw_path, fw_path_len, nv_path, nv_path_len);
 		break;
-#else /* MULTIPLE_CHIP_4345x */
+#else /* MULTIPLE_CHIP_4345X */
 	case BCM43454_CHIP_ID:
 		res = concate_revision_bcm43454(bus, fw_path, fw_path_len, nv_path, nv_path_len);
 		break;
 	case BCM4345_CHIP_ID:
 		res = concate_revision_bcm43455(bus, fw_path, fw_path_len, nv_path, nv_path_len);
 		break;
-#endif /* MULTIPLE_CHIP_4345x */
+#endif /* MULTIPLE_CHIP_4345X */
+
 	default:
 		DHD_ERROR(("REVISION SPECIFIC feature is not required\n"));
 		return res;

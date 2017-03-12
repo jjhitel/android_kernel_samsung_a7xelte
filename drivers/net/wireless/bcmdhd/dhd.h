@@ -24,7 +24,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd.h 607587 2015-12-21 11:25:08Z $
+ * $Id: dhd.h 619483 2016-02-17 02:10:55Z $
  */
 
 /****************
@@ -59,6 +59,11 @@ int get_scheduler_policy(struct task_struct *p);
 #include <wlioctl.h>
 #include <wlfc_proto.h>
 
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0) && LINUX_VERSION_CODE < \
+	KERNEL_VERSION(3, 18, 0) || defined(CONFIG_BCMDHD_VENDOR_EXT))
+#define WL_VENDOR_EXT_SUPPORT
+#endif /* 3.13.0 <= LINUX_KERNEL_VERSION < 3.18.0 || CONFIG_BCMDHD_VENDOR_EXT */
 
 #if defined(KEEP_ALIVE)
 /* Default KEEP_ALIVE Period is 55 sec to prevent AP from sending Keep Alive probe frame */
@@ -139,7 +144,8 @@ enum dhd_prealloc_index {
 	DHD_PREALLOC_WIPHY_ESCAN1 = 6,
 	DHD_PREALLOC_DHD_INFO = 7,
 	DHD_PREALLOC_DHD_WLFC_INFO = 8,
-	DHD_PREALLOC_DHD_LOG_DUMP_BUF = 9,
+	DHD_PREALLOC_DHD_WLFC_HANGER = 9,
+	DHD_PREALLOC_DHD_LOG_DUMP_BUF = 10,
 	DHD_PREALLOC_SECTION_MAX = DHD_PREALLOC_DHD_LOG_DUMP_BUF
 };
 
@@ -393,6 +399,7 @@ typedef struct dhd_pub {
 	struct dhd_log_dump_buf dld_buf;
 	unsigned int dld_enable;
 #endif /* DHD_LOG_DUMP */
+	bool max_dtim_enable;         /* use MAX bcn_li_dtim value in suspend mode */
 } dhd_pub_t;
 #if defined(CUSTOMER_HW4)
 #define MAX_RESCHED_CNT 600

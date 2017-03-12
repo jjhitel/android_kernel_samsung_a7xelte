@@ -212,7 +212,7 @@ static int sensor_3l2_power_setpin(struct platform_device *pdev,
 
 	/* READ_ROM - POWER ON */
 	SET_PIN(pdata, SENSOR_SCENARIO_READ_ROM, GPIO_SCENARIO_ON, gpio_none, "VDDIO_1.8V_CAM", PIN_REGULATOR, 1, 0);
-#if defined(CONFIG_CAMERA_ACTUATOR_DW9807) || defined(CONFIG_CAMERA_ACTUATOR_AK7371) || defined(CONFIG_CAMERA_ACTUATOR_ZC533)
+#if defined(CONFIG_CAMERA_ACTUATOR_DW9807) || defined(CONFIG_CAMERA_ACTUATOR_ZC533)
 #if defined(CONFIG_REGULATOR_SM5703)
 	SET_PIN_VOLTAGE(pdata, SENSOR_SCENARIO_READ_ROM, GPIO_SCENARIO_ON, gpio_none, "VDDAF_2.8V_CAM", PIN_REGULATOR, 1, 0, 2800000);
 #endif
@@ -233,7 +233,7 @@ static int sensor_3l2_power_setpin(struct platform_device *pdev,
 
 	/* READ_ROM - POWER OFF */
 	SET_PIN(pdata, SENSOR_SCENARIO_READ_ROM, GPIO_SCENARIO_OFF, gpio_none, "VDDIO_1.8V_CAM", PIN_REGULATOR, 0, 0);
-#if defined(CONFIG_CAMERA_ACTUATOR_DW9807) || defined(CONFIG_CAMERA_ACTUATOR_AK7371) || defined(CONFIG_CAMERA_ACTUATOR_ZC533)
+#if defined(CONFIG_CAMERA_ACTUATOR_DW9807) || defined(CONFIG_CAMERA_ACTUATOR_ZC533)
 	if (gpio_is_valid(gpio_af_pwr_en)) {  /* VDDAF_2.8V_CAM */
 		SET_PIN(pdata, SENSOR_SCENARIO_READ_ROM, GPIO_SCENARIO_OFF, gpio_af_pwr_en, NULL, PIN_OUTPUT, 0, 0);
 	} else {

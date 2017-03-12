@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_common.c 609714 2016-01-05 07:50:25Z $
+ * $Id: dhd_common.c 624289 2016-03-11 03:41:02Z $
  */
 #include <typedefs.h>
 #include <osl.h>
@@ -293,8 +293,7 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 	if (dhd_os_proto_block(dhd_pub))
 	{
 #ifdef DHD_LOG_DUMP
-		int slen, i, val, rem;
-		long int lval;
+		int slen, i, val, rem, lval;
 		char *pval, *pos, *msg;
 		char tmp[64];
 
@@ -328,12 +327,12 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 			slen = strlen(ioc->buf) + 1;
 			msg = (char*)ioc->buf;
 			if (ioc->cmd == WLC_GET_VAR) {
-				bcopy(msg, &lval, sizeof(long int));
 				msg = tmp;
 			} else {
-				bcopy((msg + slen), &lval, sizeof(long int));
+				int min_len = MIN(ioc->len - slen, sizeof(int));
+				bcopy((msg + slen), &lval, min_len);
 			}
-			DHD_ERROR_EX(("%s: cmd: %d, msg: %s, val: 0x%lx, len: %d, set: %d\n",
+			DHD_ERROR_EX(("%s: cmd: %d, msg: %s, val: 0x%x, len: %d, set: %d\n",
 				ioc->cmd == WLC_GET_VAR ? "WLC_GET_VAR" : "WLC_SET_VAR",
 				ioc->cmd, msg, lval, ioc->len, ioc->set));
 		} else {
@@ -2240,7 +2239,6 @@ bool dhd_is_associated(dhd_pub_t *dhd, uint8 ifidx, int *retval)
 	return TRUE;
 }
 
-
 /* Function to estimate possible DTIM_SKIP value */
 int
 dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
@@ -2249,9 +2247,7 @@ dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
 	int ret = -1;
 	int dtim_period = 0;
 	int ap_beacon = 0;
-#ifndef ENABLE_MAX_DTIM_IN_SUSPEND
 	int allowed_skip_dtim_cnt = 0;
-#endif /* !ENABLE_MAX_DTIM_IN_SUSPEND */
 	/* Check if associated */
 	if (dhd_is_associated(dhd, 0, NULL) == FALSE) {
 		DHD_TRACE(("%s NOT assoc ret %d\n", __FUNCTION__, ret));
@@ -2277,35 +2273,37 @@ dhd_get_suspend_bcn_li_dtim(dhd_pub_t *dhd)
 		goto exit;
 	}
 
-#ifdef ENABLE_MAX_DTIM_IN_SUSPEND
-	bcn_li_dtim = (int) (MAX_DTIM_ALLOWED_INTERVAL / (ap_beacon * dtim_period));
-	if (bcn_li_dtim == 0) {
-		bcn_li_dtim = 1;
-	}
-#else /* ENABLE_MAX_DTIM_IN_SUSPEND */
-	/* attemp to use platform defined dtim skip interval */
-	bcn_li_dtim = dhd->suspend_bcn_li_dtim;
+	if (dhd->max_dtim_enable) {
+		bcn_li_dtim = (int) (MAX_DTIM_ALLOWED_INTERVAL / (ap_beacon * dtim_period));
+		if (bcn_li_dtim == 0) {
+			bcn_li_dtim = 1;
+		}
+	} else {
+		/* attemp to use platform defined dtim skip interval */
+		bcn_li_dtim = dhd->suspend_bcn_li_dtim;
 
-	/* check if sta listen interval fits into AP dtim */
-	if (dtim_period > CUSTOM_LISTEN_INTERVAL) {
-		/* AP DTIM to big for our Listen Interval : no dtim skiping */
-		bcn_li_dtim = NO_DTIM_SKIP;
-		DHD_ERROR(("%s DTIM=%d > Listen=%d : too big ...\n",
-			__FUNCTION__, dtim_period, CUSTOM_LISTEN_INTERVAL));
-		goto exit;
-	}
+		/* check if sta listen interval fits into AP dtim */
+		if (dtim_period > CUSTOM_LISTEN_INTERVAL) {
+			/* AP DTIM to big for our Listen Interval : no dtim skiping */
+			bcn_li_dtim = NO_DTIM_SKIP;
+			DHD_ERROR(("%s DTIM=%d > Listen=%d : too big ...\n",
+				__FUNCTION__, dtim_period, CUSTOM_LISTEN_INTERVAL));
+			goto exit;
+		}
 
-	if ((dtim_period * ap_beacon * bcn_li_dtim) > MAX_DTIM_ALLOWED_INTERVAL) {
-		 allowed_skip_dtim_cnt = MAX_DTIM_ALLOWED_INTERVAL / (dtim_period * ap_beacon);
-		 bcn_li_dtim = (allowed_skip_dtim_cnt != 0) ? allowed_skip_dtim_cnt : NO_DTIM_SKIP;
-	}
+		if ((dtim_period * ap_beacon * bcn_li_dtim) > MAX_DTIM_ALLOWED_INTERVAL) {
+			allowed_skip_dtim_cnt =
+				MAX_DTIM_ALLOWED_INTERVAL / (dtim_period * ap_beacon);
+			bcn_li_dtim =
+				(allowed_skip_dtim_cnt != 0) ? allowed_skip_dtim_cnt : NO_DTIM_SKIP;
+		}
 
-	if ((bcn_li_dtim * dtim_period) > CUSTOM_LISTEN_INTERVAL) {
-		/* Round up dtim_skip to fit into STAs Listen Interval */
-		bcn_li_dtim = (int)(CUSTOM_LISTEN_INTERVAL / dtim_period);
-		DHD_TRACE(("%s agjust dtim_skip as %d\n", __FUNCTION__, bcn_li_dtim));
+		if ((bcn_li_dtim * dtim_period) > CUSTOM_LISTEN_INTERVAL) {
+			/* Round up dtim_skip to fit into STAs Listen Interval */
+			bcn_li_dtim = (int)(CUSTOM_LISTEN_INTERVAL / dtim_period);
+			DHD_TRACE(("%s agjust dtim_skip as %d\n", __FUNCTION__, bcn_li_dtim));
+		}
 	}
-#endif /* ENABLE_MAX_DTIM_IN_SUSPEND */
 
 	DHD_ERROR(("%s beacon=%d bcn_li_dtim=%d DTIM=%d Listen=%d\n",
 		__FUNCTION__, ap_beacon, bcn_li_dtim, dtim_period, CUSTOM_LISTEN_INTERVAL));

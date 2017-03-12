@@ -22,7 +22,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_linux.c 609714 2016-01-05 07:50:25Z $
+ * $Id: dhd_linux.c 623329 2016-03-07 13:18:38Z $
  */
 
 #include <typedefs.h>
@@ -536,11 +536,11 @@ module_param(dhd_arp_enable, uint, 0);
 
 /* ARP offload agent mode : Enable ARP Host Auto-Reply and ARP Peer Auto-Reply */
 
-#if defined(CUSTOMER_HW4)
+#ifdef ENABLE_ARP_SNOOP_MODE
 uint dhd_arp_mode = ARP_OL_AGENT | ARP_OL_PEER_AUTO_REPLY | ARP_OL_SNOOP;
 #else
 uint dhd_arp_mode = ARP_OL_AGENT | ARP_OL_PEER_AUTO_REPLY;
-#endif
+#endif	/* ENABLE_ARP_SNOOP_MODE */
 
 module_param(dhd_arp_mode, uint, 0);
 #endif /* ARP_OFFLOAD_SUPPORT */
@@ -4572,11 +4572,11 @@ bool dhd_validate_chipid(dhd_pub_t *dhdp)
 	config_chipid = 0;
 #endif /* BCM4354_CHIP */
 
-#if defined(MULTIPLE_CHIP_4345x)
-	if(config_chipid == BCM43454_CHIP_ID || config_chipid == BCM4345_CHIP_ID) {
+#if defined(MULTIPLE_CHIP_4345X)
+	if (config_chipid == BCM43454_CHIP_ID || config_chipid == BCM4345_CHIP_ID) {
 		return TRUE;
 	}
-#endif /* MULTIPLE_CHIP_4345x */
+#endif /* MULTIPLE_CHIP_4345X */
 
 #if defined(BCM4354_CHIP) && defined(SUPPORT_MULTIPLE_REVISION)
 	if (chipid == BCM4350_CHIP_ID && config_chipid == BCM4354_CHIP_ID)
@@ -4959,6 +4959,11 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 	dhd->tdls_enable = FALSE;
 #endif /* WLTDLS */
 	dhd->suspend_bcn_li_dtim = CUSTOM_SUSPEND_BCN_LI_DTIM;
+#ifdef ENABLE_MAX_DTIM_IN_SUSPEND
+	dhd->max_dtim_enable = TRUE;
+#else
+	dhd->max_dtim_enable = FALSE;
+#endif /* ENABLE_MAX_DTIM_IN_SUSPEND */
 	DHD_TRACE(("Enter %s\n", __FUNCTION__));
 	dhd->op_mode = 0;
 #ifdef CUSTOMER_HW4
@@ -5642,6 +5647,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 		DHD_ERROR(("Firmware version = %s\n", buf));
 #ifdef DHD_LOG_DUMP
 		strncpy(fw_version, buf, FW_VER_STR_LEN);
+		fw_version[FW_VER_STR_LEN-1] = '\0';
 #endif /* DHD_LOG_DUMP */
 		dhd_set_version_info(dhd, buf);
 #if defined(CUSTOMER_HW4) && defined(WRITE_WLANINFO)
@@ -7073,6 +7079,30 @@ int net_os_set_suspend_bcn_li_dtim(struct net_device *dev, int val)
 
 	if (dhd)
 		dhd->pub.suspend_bcn_li_dtim = val;
+
+	return 0;
+}
+
+int net_os_set_max_dtim_enable(struct net_device *dev, int val)
+{
+	dhd_info_t *dhd = *(dhd_info_t **)netdev_priv(dev);
+
+	if (dhd) {
+#ifdef ENABLE_MAX_DTIM_IN_SUSPEND
+		DHD_ERROR(("%s: use MAX bcn_li_dtim in suspend %s\n",
+			__FUNCTION__, (val ? "Enable" : "Disable")));
+		if (val) {
+			dhd->pub.max_dtim_enable = TRUE;
+		} else {
+			dhd->pub.max_dtim_enable = FALSE;
+		}
+#else /* ENABLE_MAX_DTIM_IN_SUSPEND */
+		DHD_ERROR(("%s: max_dtim_enable always FALSE\n", __FUNCTION__));
+		dhd->pub.max_dtim_enable = FALSE;
+#endif /* ENABLE_MAX_DTIM_IN_SUSPEND */
+	} else {
+		return -1;
+	}
 
 	return 0;
 }

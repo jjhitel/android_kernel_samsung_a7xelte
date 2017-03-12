@@ -382,6 +382,7 @@ static int sm5705_fled_turn_on_flash(struct sm5705_fled_info *sm5705_fled, int i
 			return ret;
 		}
 	}
+	sm5705_charger_oper_push_event(SM5705_CHARGER_OP_EVENT_TORCH, 0);
 	sm5705_charger_oper_push_event(SM5705_CHARGER_OP_EVENT_FLASH, 1);
 
 	dev_info(dev, "%s: FLED[%d] Flash turn-on done.\n", __func__, index);

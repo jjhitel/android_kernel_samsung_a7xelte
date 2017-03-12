@@ -2186,7 +2186,7 @@ static void sm5705_charger_initialize(struct sm5705_charger_data *charger)
 
 	sm5705_CHG_enable_AUTOSET(charger, 1);
 
-	sm5705_CHG_set_BST_IQ3LIMIT(charger, SM5705_CHG_BST_IQ3LIMIT_3_5A);
+	sm5705_CHG_set_BST_IQ3LIMIT(charger, SM5705_CHG_BST_IQ3LIMIT_4_0A);
 
 	sm5705_CHG_set_OVPSEL(charger, 1); /* fix OVPSEL */
 

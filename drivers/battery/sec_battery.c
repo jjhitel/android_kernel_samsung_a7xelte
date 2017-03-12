@@ -1142,6 +1142,14 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery, int tempera
 			val.intval = battery->pdata->swelling_drop_float_voltage;
 			psy_do_property(battery->pdata->charger_name, set,
 					POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+			/* change termination current */
+			if(temperature < battery->pdata->swelling_low_temp_recov){
+				val.intval =  battery->pdata->swelling_low_temp_topoff;
+			} else{
+				val.intval =  battery->pdata->swelling_high_temp_topoff;
+			}
+			psy_do_property(battery->pdata->charger_name, set,
+					POWER_SUPPLY_PROP_CURRENT_FULL, val);
 			if ((temperature <= battery->pdata->swelling_low_temp_block) &&
 				(battery->pdata->swelling_chg_current > 0)) {
 				pr_info("%s: swelling mode reduce charging current(temp:%d)\n",
@@ -5354,6 +5362,16 @@ static int sec_bat_parse_dt(struct device *dev,
 			pr_info("%s : Full check current 2nd is Empty\n",
 				__func__);
 	}
+
+	ret = of_property_read_u32(np, "battery,swelling_high_temp_topoff",
+		&pdata->swelling_high_temp_topoff);
+	if (ret)
+		pr_info("%s : Swelling high temperature topoff is Empty\n", __func__);
+
+	ret = of_property_read_u32(np, "battery,swelling_low_temp_topoff",
+		&pdata->swelling_low_temp_topoff);
+	if (ret)
+		pr_info("%s : Swelling low temperature topoff is Empty\n", __func__);
 
 	ret = of_property_read_u32(np, "battery,adc_check_count",
 		&pdata->adc_check_count);
